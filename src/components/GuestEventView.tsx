@@ -73,20 +73,28 @@ export default function GuestEventView({
         .upload(path, file, { cacheControl: '3600', upsert: false })
 
       if (uploadError) {
-        setError('No se pudo subir la foto.')
+        setError(`No se pudo subir la foto: ${uploadError.message}`)
         continue
       }
 
-      const { data: photo } = await supabase
+      // Insert without chaining select — RLS may block reading back the row
+      const { error: insertError } = await supabase
         .from('photos')
         .insert({ event_id: eventId, guest_id: guestId, storage_path: path })
-        .select()
-        .single()
 
-      if (photo) {
-        setPhotos(prev => [photo as Photo, ...prev])
-        setUploadCount(c => c + 1)
+      if (insertError) {
+        setError(`No se pudo guardar la foto: ${insertError.message}`)
+        continue
       }
+
+      // Optimistic update using the path we already have
+      const optimisticPhoto: Photo = {
+        id: `local-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        storage_path: path,
+        uploaded_at: new Date().toISOString(),
+      }
+      setPhotos(prev => [optimisticPhoto, ...prev])
+      setUploadCount(c => c + 1)
     }
 
     setUploading(false)
