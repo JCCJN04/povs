@@ -4,6 +4,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import JoinEventForm from '@/components/JoinEventForm'
 import AlbumView from '@/components/AlbumView'
+import GuestAutoRestorer from '@/components/GuestAutoRestorer'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Clock, Users } from 'lucide-react'
@@ -122,6 +123,9 @@ export default async function EventPage({ params, searchParams }: {
           }}
         />
       )}
+
+      {/* Auto-restore token from localStorage if no token in URL */}
+      {!guest && <GuestAutoRestorer slug={slug} />}
 
       {/* Brand mark */}
       <div className="relative z-10 flex justify-center pt-12">

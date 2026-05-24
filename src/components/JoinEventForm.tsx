@@ -28,6 +28,9 @@ export default function JoinEventForm({ eventId, slug }: { eventId: string; slug
       return
     }
 
+    try {
+      localStorage.setItem(`povs-guest-${slug}`, JSON.stringify({ token: data.token, name }))
+    } catch { /* storage unavailable */ }
     router.push(`/event/${slug}/upload?token=${data.token}`)
   }
 

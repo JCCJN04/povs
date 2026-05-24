@@ -52,13 +52,14 @@ export default async function UploadPage({ params, searchParams }: {
     .eq('event_id', event.id)
     .eq('guest_id', guest.id)
 
-  // All photos for the feed (most recent first)
+  // Only this guest's photos (album is unrevealed — other guests' photos stay hidden)
   const { data: photos } = await supabase
     .from('photos')
-    .select('*, guest:guests(name)')
+    .select('*')
     .eq('event_id', event.id)
+    .eq('guest_id', guest.id)
     .order('uploaded_at', { ascending: false })
-    .limit(60)
+    .limit(100)
 
   const timeLeft = formatDistanceToNow(new Date(event.ends_at), { locale: es })
 
@@ -124,7 +125,7 @@ export default async function UploadPage({ params, searchParams }: {
           guestName={guest.name}
           slug={slug}
           token={token}
-          initialPhotos={(photos ?? []) as Parameters<typeof GuestEventView>[0]['initialPhotos']}
+          initialPhotos={photos ?? []}
           guestPhotoCount={guestPhotoCount ?? 0}
           shotsLimit={SHOTS_LIMIT}
         />
