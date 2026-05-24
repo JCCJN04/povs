@@ -159,7 +159,7 @@ export function FeaturesSection() {
             </div>
             <div className="lg:col-span-5 lg:pb-4">
               <p
-                className={`text-xl text-muted-foreground leading-relaxed transition-all duration-1000 delay-200 ${
+                className={`text-base sm:text-xl text-muted-foreground leading-relaxed transition-all duration-1000 delay-200 ${
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 }`}
               >
