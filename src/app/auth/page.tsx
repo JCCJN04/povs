@@ -61,7 +61,7 @@ export default function AuthPage() {
       <div className="relative z-10 w-full max-w-sm">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-1 mb-14">
-          <span className="font-display text-3xl tracking-tight text-foreground">Once</span>
+          <span className="font-display text-3xl tracking-tight text-foreground">Povs</span>
           <span className="font-mono text-xs mt-1.5 text-muted-foreground">™</span>
         </Link>
 

@@ -112,7 +112,7 @@ export default function GuestEventView({
       const blobUrl = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = blobUrl
-      a.download = `once-${photo.id.slice(0, 6)}.jpg`
+      a.download = `povs-${photo.id.slice(0, 6)}.jpg`
       a.click()
       URL.revokeObjectURL(blobUrl)
       await new Promise(r => setTimeout(r, 200))

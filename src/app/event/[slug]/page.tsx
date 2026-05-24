@@ -69,7 +69,7 @@ export default async function EventPage({ params, searchParams }: {
         <div className="max-w-xl mx-auto px-4 pt-12 pb-20">
           {/* Brand */}
           <Link href="/" className="block mb-10 text-center">
-            <span className="font-display text-lg tracking-tight text-foreground/50">Once</span>
+            <span className="font-display text-lg tracking-tight text-foreground/50">Povs</span>
           </Link>
 
           <h1 className="font-display text-3xl font-light text-center mb-2">{event.name}</h1>
@@ -88,7 +88,7 @@ export default async function EventPage({ params, searchParams }: {
     return (
       <main className="min-h-[100svh] bg-[#0a0a0a] flex flex-col items-center justify-center px-6">
         <Link href="/" className="absolute top-6 left-6">
-          <span className="font-display text-base text-foreground/30">Once</span>
+          <span className="font-display text-base text-foreground/30">Povs</span>
         </Link>
         <p className="text-4xl mb-5">🎞️</p>
         <h1 className="font-display text-2xl font-light mb-2 text-center">{event.name}</h1>
@@ -127,7 +127,7 @@ export default async function EventPage({ params, searchParams }: {
       <div className="relative z-10 flex justify-center pt-12">
         <Link href="/">
           <span className="font-display text-base text-white/40 hover:text-white/70 transition-colors">
-            Once
+            Povs
           </span>
         </Link>
       </div>

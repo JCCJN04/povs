@@ -48,7 +48,7 @@ export function UsesSection() {
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               }`}
             >
-              Once funciona para cualquier evento donde quieras que todos compartan sus perspectivas.
+              Povs funciona para cualquier evento donde quieras que todos compartan sus perspectivas.
             </p>
           </div>
         </div>

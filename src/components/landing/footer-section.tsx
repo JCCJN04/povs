@@ -45,7 +45,7 @@ export function FooterSection() {
             {/* Brand */}
             <div className="col-span-2">
               <Link href="/" className="inline-flex items-center gap-2 mb-6">
-                <span className="text-2xl font-display text-white">Once</span>
+                <span className="text-2xl font-display text-white">Povs</span>
                 <span className="text-xs text-white/40 font-mono">™</span>
               </Link>
               <p className="text-white/50 leading-relaxed mb-8 max-w-xs text-sm">
@@ -84,7 +84,7 @@ export function FooterSection() {
         {/* Bottom */}
         <div className="py-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-white/30">
-            &copy; {new Date().getFullYear()} Once. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} Povs. Todos los derechos reservados.
           </p>
           <div className="flex items-center gap-2 text-sm text-white/30">
             <span className="w-2 h-2 rounded-full" style={{ background: '#c9a96e' }} />

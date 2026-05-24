@@ -35,7 +35,7 @@ export default function PhotoGrid({ photos, supabaseUrl }: {
     for (let i = 0; i < photos.length; i++) {
       const photo = photos[i]
       const url = getPhotoUrl(supabaseUrl, photo.storage_path)
-      const filename = `foto-${(i + 1).toString().padStart(2, '0')}-${photo.guest?.name ?? 'once'}.jpg`
+      const filename = `foto-${(i + 1).toString().padStart(2, '0')}-${photo.guest?.name ?? 'povs'}.jpg`
       await downloadPhoto(url, filename)
       await new Promise(r => setTimeout(r, 300))
     }
@@ -45,7 +45,7 @@ export default function PhotoGrid({ photos, supabaseUrl }: {
   async function handleDownload(photo: PhotoWithGuest) {
     setDownloadingId(photo.id)
     const url = getPhotoUrl(supabaseUrl, photo.storage_path)
-    const filename = `foto-${photo.guest?.name ?? 'once'}-${photo.id.slice(0, 6)}.jpg`
+    const filename = `foto-${photo.guest?.name ?? 'povs'}-${photo.id.slice(0, 6)}.jpg`
     await downloadPhoto(url, filename)
     setDownloadingId(null)
   }

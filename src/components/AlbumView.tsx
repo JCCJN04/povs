@@ -71,7 +71,7 @@ export default function AlbumView({ eventId, guestToken }: { eventId: string; gu
     if (!lightbox) return
     setDownloading(true)
     const url = getPhotoUrl(supabaseUrl, lightbox.storage_path)
-    const filename = `foto-${lightbox.guest?.name ?? 'once'}-${lightbox.id.slice(0, 6)}.jpg`
+    const filename = `foto-${lightbox.guest?.name ?? 'povs'}-${lightbox.id.slice(0, 6)}.jpg`
     await downloadPhoto(url, filename)
     setDownloading(false)
   }
@@ -81,7 +81,7 @@ export default function AlbumView({ eventId, guestToken }: { eventId: string; gu
     for (let i = 0; i < photos.length; i++) {
       const photo = photos[i]
       const url = getPhotoUrl(supabaseUrl, photo.storage_path)
-      const filename = `foto-${(i + 1).toString().padStart(2, '0')}-${photo.guest?.name ?? 'once'}.jpg`
+      const filename = `foto-${(i + 1).toString().padStart(2, '0')}-${photo.guest?.name ?? 'povs'}.jpg`
       await downloadPhoto(url, filename)
       await new Promise(r => setTimeout(r, 300))
     }
