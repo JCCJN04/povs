@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
+import { headers } from 'next/headers'
 import Link from 'next/link'
 import { formatDistanceToNow, format } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -33,8 +34,10 @@ export default async function ManageEventPage({ params }: { params: Promise<{ id
     supabase.from('guests').select('*').eq('event_id', id).order('joined_at', { ascending: false }),
   ])
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL
-    || (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 'http://localhost:3000')
+  const headersList = await headers()
+  const host = headersList.get('host') ?? 'localhost:3000'
+  const proto = host.includes('localhost') ? 'http' : 'https'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || `${proto}://${host}`
   const eventUrl = `${appUrl}/event/${event.slug}`
   const isActive = event.status === 'active' && new Date(event.ends_at) > new Date()
   const isRevealed = event.status === 'revealed'
