@@ -33,7 +33,9 @@ export default async function ManageEventPage({ params }: { params: Promise<{ id
     supabase.from('guests').select('*').eq('event_id', id).order('joined_at', { ascending: false }),
   ])
 
-  const eventUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/event/${event.slug}`
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL
+    || (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 'http://localhost:3000')
+  const eventUrl = `${appUrl}/event/${event.slug}`
   const isActive = event.status === 'active' && new Date(event.ends_at) > new Date()
   const isRevealed = event.status === 'revealed'
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
