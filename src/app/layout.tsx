@@ -19,7 +19,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Povs — Captura tu día a través de todos",
+  title: "Povs — Captura el día a través de todos",
   description: "Álbum privado de fotos para eventos. Los invitados se unen con un código QR. El álbum se revela al terminar.",
 };
 
