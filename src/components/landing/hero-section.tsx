@@ -145,24 +145,24 @@ export function HeroSection() {
         ))}
       </div>
 
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 lg:px-12 pt-24 pb-32 lg:py-40">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 lg:px-12 pt-28 pb-28 lg:py-40">
         <div className="lg:max-w-[60%]">
           {/* Eyebrow */}
           <div
-            className={`mb-6 transition-all duration-700 ${
+            className={`mb-4 lg:mb-6 transition-all duration-700 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            <span className="inline-flex items-center gap-3 text-xs sm:text-sm font-mono text-white/60">
+            <span className="inline-flex items-center gap-3 text-xs font-mono text-white/60">
               <span className="w-6 sm:w-8 h-px bg-white/30" />
               Álbum privado · Se revela al terminar
             </span>
           </div>
 
           {/* Headline */}
-          <div className="mb-8 lg:mb-12">
+          <div className="mb-5 lg:mb-12">
             <h1
-              className={`text-left text-[clamp(2.2rem,8vw,7rem)] font-display leading-[0.92] tracking-tight text-white transition-all duration-1000 ${
+              className={`text-left text-[clamp(3rem,10vw,7rem)] font-display leading-[0.92] tracking-tight text-white transition-all duration-1000 ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
             >
@@ -173,11 +173,11 @@ export function HeroSection() {
 
           {/* Subheadline with animated word */}
           <div
-            className={`mb-8 lg:mb-12 transition-all duration-1000 delay-200 ${
+            className={`mb-6 lg:mb-12 transition-all duration-1000 delay-200 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            <p className="text-base sm:text-lg text-white/50 font-sans max-w-lg leading-relaxed">
+            <p className="text-sm sm:text-lg text-white/50 font-sans max-w-lg leading-relaxed">
               Invitados se unen con un QR — sin app, sin registro.{" "}
               <span className="text-white/80">
                 <BlurWord word={words[wordIndex]} trigger={wordIndex} />
@@ -194,14 +194,14 @@ export function HeroSection() {
           >
             <Link
               href="/auth"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full text-sm sm:text-base font-medium transition-all hover:opacity-90 active:scale-95"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-sm font-medium transition-all hover:opacity-90 active:scale-95"
               style={{ background: '#c9a96e', color: '#0a0a0a' }}
             >
               Crear tu evento gratis <ArrowRight size={16} />
             </Link>
             <a
               href="#como-funciona"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:px-8 sm:py-4 rounded-full text-sm sm:text-base transition-all border border-white/20 text-white/70 hover:text-white hover:border-white/40"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-sm transition-all border border-white/20 text-white/70 hover:text-white hover:border-white/40"
             >
               Ver cómo funciona
             </a>
@@ -215,15 +215,15 @@ export function HeroSection() {
           isVisible ? "opacity-100" : "opacity-0"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto flex items-start gap-6 sm:gap-10 lg:gap-20">
+        <div className="max-w-[1400px] mx-auto flex items-start gap-8 sm:gap-10 lg:gap-20">
           {[
             { value: "Sin app",     label: "sin instalar nada" },
             { value: "QR code",     label: "únete al instante" },
             { value: "Auto-reveal", label: "se revela solo" },
           ].map((stat) => (
             <div key={stat.label} className="flex flex-col gap-1">
-              <span className="text-lg sm:text-2xl lg:text-3xl font-display text-white">{stat.value}</span>
-              <span className="text-xs text-white/50 leading-tight">{stat.label}</span>
+              <span className="text-xl sm:text-2xl lg:text-3xl font-display text-white">{stat.value}</span>
+              <span className="text-[11px] sm:text-xs text-white/50 leading-tight">{stat.label}</span>
             </div>
           ))}
         </div>
