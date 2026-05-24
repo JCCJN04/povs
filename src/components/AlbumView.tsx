@@ -140,8 +140,19 @@ export default function AlbumView({ eventId, guestToken }: { eventId: string; gu
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
-            {/* Hover overlay with download hint */}
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center">
+            {/* Guest name — always visible at bottom */}
+            {photo.guest?.name && (
+              <div
+                className="absolute bottom-0 left-0 right-0 px-2 py-1.5"
+                style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%)' }}
+              >
+                <span className="text-[10px] font-sans text-white/90 truncate block leading-tight">
+                  {photo.guest.name}
+                </span>
+              </div>
+            )}
+            {/* Hover overlay */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200 flex items-center justify-center">
               <Download size={16} className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
             </div>
           </button>
