@@ -5,7 +5,8 @@ import { createClient } from '@/lib/supabase/client'
 import { Photo, Guest } from '@/lib/types'
 import Image from 'next/image'
 import { getPhotoUrl } from '@/lib/utils'
-import { Download, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Download, X, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
+import { useInView } from 'react-intersection-observer'
 
 type PhotoWithGuest = Photo & { guest: Guest | null }
 
@@ -27,24 +28,61 @@ async function downloadPhoto(url: string, filename: string) {
 export default function AlbumView({ eventId, guestToken }: { eventId: string; guestToken?: string }) {
   const [photos, setPhotos] = useState<PhotoWithGuest[]>([])
   const [loading, setLoading] = useState(true)
+  const [fetchingMore, setFetchingMore] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [downloading, setDownloading] = useState(false)
   const [downloadingAll, setDownloadingAll] = useState(false)
+  const [page, setPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+  
+  const { ref, inView } = useInView({ threshold: 0.5 })
   const supabase = createClient()
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
-  useEffect(() => {
-    async function load() {
-      const { data } = await supabase
-        .from('photos')
-        .select('*, guest:guests(name)')
-        .eq('event_id', eventId)
-        .order('uploaded_at', { ascending: false })
-      setPhotos((data || []) as PhotoWithGuest[])
-      setLoading(false)
+  const loadPhotos = useCallback(async (pageNumber: number) => {
+    if (pageNumber > 0) setFetchingMore(true)
+    
+    const limit = 20
+    const start = pageNumber * limit
+    const end = start + limit - 1
+
+    const { data } = await supabase
+      .from('photos')
+      .select('*, guest:guests(name)')
+      .eq('event_id', eventId)
+      .order('uploaded_at', { ascending: false })
+      .range(start, end)
+
+    if (data) {
+      setPhotos(prev => {
+        // Prevent duplicates from strict mode / rapid fires
+        const newPhotos = data as PhotoWithGuest[]
+        if (pageNumber === 0) return newPhotos
+        
+        const existingIds = new Set(prev.map(p => p.id))
+        const filtered = newPhotos.filter(p => !existingIds.has(p.id))
+        return [...prev, ...filtered]
+      })
+      setHasMore(data.length === limit)
     }
-    load()
+    setLoading(false)
+    setFetchingMore(false)
   }, [eventId, supabase])
+
+  // Initial load
+  useEffect(() => {
+    setPage(0)
+    loadPhotos(0)
+  }, [loadPhotos])
+
+  // Infinite scroll trigger
+  useEffect(() => {
+    if (inView && hasMore && !loading && !fetchingMore) {
+      const nextPage = page + 1
+      setPage(nextPage)
+      loadPhotos(nextPage)
+    }
+  }, [inView, hasMore, loading, fetchingMore, loadPhotos, page])
 
   const lightbox = lightboxIndex !== null ? photos[lightboxIndex] : null
 
@@ -158,6 +196,13 @@ export default function AlbumView({ eventId, guestToken }: { eventId: string; gu
           </button>
         ))}
       </div>
+
+      {/* Infinite Scroll Trigger */}
+      {hasMore && (
+        <div ref={ref} className="flex justify-center py-10">
+          <Loader2 className="w-5 h-5 animate-spin" style={{ color: '#c9a96e' }} />
+        </div>
+      )}
 
       {/* Lightbox */}
       {lightbox && lightboxIndex !== null && (

@@ -11,6 +11,8 @@ interface UploadedPhoto {
   name: string
 }
 
+import imageCompression from 'browser-image-compression'
+
 export default function PhotoUploader({ eventId, guestId, slug, token }: {
   eventId: string
   guestId: string
@@ -25,44 +27,70 @@ export default function PhotoUploader({ eventId, guestId, slug, token }: {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
   const uploadFiles = useCallback(async (files: FileList) => {
+    if (uploading) return
     setUploading(true)
     setError('')
 
-    const newUploaded: UploadedPhoto[] = []
+    const fileArray = Array.from(files).filter(f => f.type.startsWith('image/'))
+    
+    if (fileArray.length === 0) {
+      setUploading(false)
+      return
+    }
 
-    for (const file of Array.from(files)) {
-      if (!file.type.startsWith('image/')) continue
+    const uploadPromises = fileArray.map(async (file) => {
+      // 1. Compress image
+      const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true }
+      let compressedFile = file
+      try {
+        compressedFile = await imageCompression(file, options)
+      } catch (e) {
+        console.warn('Compression failed, using original', e)
+      }
 
-      const ext = file.name.split('.').pop()
+      // 2. Upload to storage
+      const ext = file.name.split('.').pop() ?? 'jpg'
       const path = `${eventId}/${guestId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
       const { error: uploadError } = await supabase.storage
         .from('photos')
-        .upload(path, file, { cacheControl: '3600', upsert: false })
+        .upload(path, compressedFile, { cacheControl: '3600', upsert: false })
 
-      if (uploadError) {
-        setError(`No se pudo subir ${file.name}. Inténtalo de nuevo.`)
-        continue
-      }
+      if (uploadError) throw new Error(uploadError.message)
 
-      const { data: photo } = await supabase
+      // 3. Insert into DB
+      const { data: photo, error: insertError } = await supabase
         .from('photos')
         .insert({ event_id: eventId, guest_id: guestId, storage_path: path })
         .select()
         .single()
 
-      if (photo) {
-        newUploaded.push({
-          id: photo.id,
-          url: `${supabaseUrl}/storage/v1/object/public/photos/${path}`,
-          name: file.name,
-        })
+      if (insertError) throw new Error(insertError.message)
+
+      return {
+        id: photo.id,
+        url: `${supabaseUrl}/storage/v1/object/public/photos/${path}`,
+        name: file.name,
       }
+    })
+
+    const results = await Promise.allSettled(uploadPromises)
+    const newUploaded = results
+      .filter((r): r is PromiseFulfilledResult<UploadedPhoto> => r.status === 'fulfilled')
+      .map(r => r.value)
+
+    const fails = results.filter(r => r.status === 'rejected')
+
+    if (fails.length > 0) {
+      setError(`No se pudieron subir ${fails.length} foto(s).`)
     }
 
-    setUploaded(prev => [...prev, ...newUploaded])
+    if (newUploaded.length > 0) {
+      setUploaded(prev => [...prev, ...newUploaded])
+    }
+    
     setUploading(false)
-  }, [eventId, guestId, supabase, supabaseUrl])
+  }, [uploading, eventId, guestId, supabase, supabaseUrl])
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files?.length) uploadFiles(e.target.files)
