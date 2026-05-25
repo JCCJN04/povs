@@ -26,12 +26,6 @@ export default async function EventPage({ params, searchParams }: {
 
   if (!event) notFound()
 
-  // Auto-reveal if ended
-  if (event.status === 'active' && new Date(event.ends_at) < new Date()) {
-    await supabase.from('events').update({ status: 'revealed' }).eq('id', event.id)
-    event.status = 'revealed'
-  }
-
   const isActive = event.status === 'active' && new Date(event.ends_at) > new Date()
   const isRevealed = event.status === 'revealed'
 

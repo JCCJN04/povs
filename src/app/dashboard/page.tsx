@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Event } from '@/lib/types'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { Plus, Camera, Users } from 'lucide-react'
@@ -14,28 +13,17 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/auth')
 
-  await supabase
-    .from('events')
-    .update({ status: 'revealed' })
-    .eq('host_id', user.id)
-    .eq('status', 'active')
-    .lt('ends_at', new Date().toISOString())
-
   const { data: events } = await supabase
     .from('events')
-    .select('*')
+    .select('*, photos(count), guests(count)')
     .eq('host_id', user.id)
     .order('created_at', { ascending: false })
 
-  const eventsWithCounts = await Promise.all(
-    (events || []).map(async (event: Event) => {
-      const [{ count: photoCount }, { count: guestCount }] = await Promise.all([
-        supabase.from('photos').select('*', { count: 'exact', head: true }).eq('event_id', event.id),
-        supabase.from('guests').select('*', { count: 'exact', head: true }).eq('event_id', event.id),
-      ])
-      return { ...event, photoCount: photoCount || 0, guestCount: guestCount || 0 }
-    })
-  )
+  const eventsWithCounts = (events || []).map((event) => ({
+    ...event,
+    photoCount: (event.photos as unknown as Array<{ count: number }>)?.[0]?.count ?? 0,
+    guestCount: (event.guests as unknown as Array<{ count: number }>)?.[0]?.count ?? 0,
+  }))
 
   const statusColor: Record<string, string> = {
     active: '#4ade80',
@@ -129,17 +117,11 @@ export default async function DashboardPage() {
                 {/* Right: actions */}
                 <div className="flex items-center gap-4 flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
                   <Link
-                    href={`/event/${event.slug}`}
-                    className="text-xs font-sans text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Ver ↗
-                  </Link>
-                  <Link
                     href={`/dashboard/event/${event.id}`}
                     className="px-4 py-1.5 text-xs font-sans rounded-full transition-all hover:opacity-90"
                     style={{ background: '#161610', color: '#c9a96e', border: '1px solid rgba(201,169,110,0.2)' }}
                   >
-                    Gestionar
+                    Ver y gestionar
                   </Link>
                 </div>
               </div>
